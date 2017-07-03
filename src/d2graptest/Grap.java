@@ -64,6 +64,8 @@ public class Grap {
     
     private void drawTriangle(GTriangle t,Color c) {
         
+        if (t == null) return;
+        
         grap.setColor(c);
         
         grap.drawString("A", t.A.getX(), t.A.getY());
@@ -76,20 +78,53 @@ public class Grap {
         
     }
     
-    private GPoint getNearestPointOfLine(GPoint a,GPoint b, GPoint center) {
+    private boolean areCrossing(GPoint a,GPoint b,GPoint c, GPoint d) {
+        double ua;
+        double ub;
+        double ua1 = ((d.getX() - c.getX()) * (a.getY()-c.getY())) - ( (d.getY()-c.getY()) * (a.getX()-c.getX()) );
+        double ua2 = ((d.getY() - c.getY()) * (b.getX()-a.getX())) - ( (d.getX()-c.getX()) * (b.getY()-a.getY()) );
         
-        GPoint c = new GPoint( (int)(a.getX() + b.getX())/2 , (int)(a.getY() + b.getY())/2);
+        double ub1 = ((b.getX() - a.getX()) * (a.getY()-c.getY())) - ( (b.getY()-a.getY()) * (a.getX()-c.getX()) );
+        double ub2 = ((d.getY() - c.getY()) * (b.getX()-a.getX())) - ( (d.getX()-c.getX()) * (b.getY()-a.getY()) );
+        
+        if ((ub2 == 0) || (ua2==0)) return false;
+        
+        ua = ua1 / ua2;
+        ub = ub1 / ub2;
+        
+        if (
+             (ua > 0)
+             && (ua < 1)
+             && (ub > 0)
+             && (ub < 1)
+            ) {
+            return true;
+        }
+                
+        
+        return false;
+    }
+    
+    private void print(String s,GPoint p) {
+        grap.drawString(s, p.getX(),p.getY());
+    }
+    
+    private GPoint getNearestPointOfLine(GTriangle t) {
+        
+        GPoint from = t.getABCenter();
         double dis = Math.sqrt( Math.pow(width,2) + Math.pow(height,2) );
         GPoint result = null;
         for (int i =0; i<points.length; i++ ) {
-            if ( 
-                    (!points[i].equals(c)) 
-                    && (!points[i].equals(a)) 
-                    && (!points[i].equals(b)) 
-                    && (points[i].getDistance(center) > points[i].getDistance(c)) 
-                    && (points[i].getDistance(c)<dis)
-                ) {
-                dis = points[i].getDistance(c);
+            GTriangle tt = new GTriangle( points[i],t.A,t.B );
+            if ( points[i].equals(t.A) ) print("1", points[i]);
+            else if (points[i].equals(t.B)) print("2", points[i]);
+            else if (points[i].equals(t.C)) print("3", points[i]);
+            else if ( areCrossing(points[i], from, t.C, t.B) ) print("4", points[i]);
+            else if ( areCrossing(points[i], from, t.C, t.A) ) print("5", points[i]);
+            else if (tt.getRatio()< 1.1) print("6",points[i]);
+            else if (points[i].getDistance(from)>=dis) print("7", points[i]);
+            else {
+                dis = points[i].getDistance(from);
                 result = points[i];
             }
         }
@@ -98,22 +133,22 @@ public class Grap {
     }
     
     private GTriangle getNextTriangle(GTriangle t) {
-        GPoint na = getNearestPointOfLine(t.B,t.C,t.getCenter());
+        /*GPoint na = getNearestPointOfLine(t);
         double da = lastDistance;
-        GPoint nb = getNearestPointOfLine(t.A,t.C,t.getCenter());
-        double db = lastDistance;
-        GPoint nc = getNearestPointOfLine(t.A,t.B,t.getCenter());
+        GPoint nb = getNearestPointOfLine(t);
+        double db = lastDistance;*/
+        GPoint nc = getNearestPointOfLine(t);
         double dc = lastDistance;
         
-        if ( (da<db) && (da<dc) ) {
+        /*if ( (da<db) && (da<dc) ) {
             return new GTriangle(na,t.B,t.C);
         } if ( (db<da) && (db<dc) ) {
             return new GTriangle(nb,t.A,t.C);
         } else {
             return new GTriangle(nc,t.A,t.B);
-        }
+        }*/
         
-        
+        return new GTriangle(nc,t.A,t.B);
     }
     
     public  void  draw() {
