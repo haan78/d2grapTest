@@ -30,5 +30,9 @@ public class GPoint {
         return Math.sqrt( ( Math.pow(p.getX()-x, 2) + Math.pow(p.getY()-y, 2) ) );
     }
     
+    public boolean equals(GPoint p) {
+        return (getX()==p.getX()) && (getY()==p.getY());
+    }
+    
     
 }

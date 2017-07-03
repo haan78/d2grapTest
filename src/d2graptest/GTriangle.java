@@ -14,9 +14,45 @@ public class GTriangle {
     public GPoint B;
     public GPoint C;
     
+    
+    
+    public double getRatio() {
+        double dc = A.getDistance(B);
+        double db = C.getDistance(A);
+        double da = B.getDistance(C);
+        
+        if ( (da > db) && (da > dc) ) {
+            return (db+dc) / da;
+        } else if ( (db > da) && (db > dc) ) {
+            return (dc+da) /  db;
+        } else {
+            return (db+da) / dc;
+        }      
+    }
+
+    public GTriangle(GPoint A, GPoint B, GPoint C) {
+        this.A = A;
+        this.B = B;
+        this.C = C;
+    }
+
+    public GTriangle() {
+    }
+    
+    public GPoint getCenter() {
+        GPoint bc = getBCCenter();
+        return new GPoint( (int)(( A.getX()+(2*bc.getX()) )/3) , (int)(( A.getY()+(2*bc.getY()) )/3) );
+    }
+    
     public GPoint getABCenter() {
-        double x = (B.getX() - A.getX() / 2 ) + A.getX();
-        double y = (B.getY() - A.getY() / 2 ) + A.getY();
-        return new GPoint( (int)x , (int)y);
+        return new GPoint( (int)( A.getX()+B.getX() )/2 , (int)( A.getY() + B.getY() )/2 );
+    }
+    
+    public GPoint getBCCenter() {
+        return new GPoint( (int)( B.getX()+C.getX() )/2 , (int)( B.getY() + C.getY() )/2 );
+    }
+    
+    public GPoint getACCenter() {
+        return new GPoint( (int)( A.getX()+C.getX() )/2 , (int)( A.getY() + C.getY() )/2 );
     }
 }
