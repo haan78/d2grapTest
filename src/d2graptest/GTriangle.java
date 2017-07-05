@@ -29,6 +29,10 @@ public class GTriangle {
             return (db+da) / dc;
         }      
     }
+    
+    public double getArea() {
+        return ( ( B.getX()-A.getX() ) * (C.getY()- A.getY()) ) - ( ( B.getY() - A.getY() ) * ( C.getX() - A.getX() ) );
+    }
 
     public GTriangle(GPoint A, GPoint B, GPoint C) {
         this.A = A;
